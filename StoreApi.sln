@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.539
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApi", "StoreApi\StoreApi.csproj", "{DD6CE5BC-1E1D-4B2C-9A0C-9F0634FB6E7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoreApi", "StoreApi\StoreApi.csproj", "{DD6CE5BC-1E1D-4B2C-9A0C-9F0634FB6E7A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store.Persistence", "Store.Persistence\Store.Persistence.csproj", "{2424CD1D-D4C7-491B-9C40-1AED6774C878}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store.Core", "Store.Core\Store.Core.csproj", "{CC15DC0A-A65C-4F06-B45F-B248BB96045E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{DD6CE5BC-1E1D-4B2C-9A0C-9F0634FB6E7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD6CE5BC-1E1D-4B2C-9A0C-9F0634FB6E7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD6CE5BC-1E1D-4B2C-9A0C-9F0634FB6E7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2424CD1D-D4C7-491B-9C40-1AED6774C878}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2424CD1D-D4C7-491B-9C40-1AED6774C878}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2424CD1D-D4C7-491B-9C40-1AED6774C878}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2424CD1D-D4C7-491B-9C40-1AED6774C878}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC15DC0A-A65C-4F06-B45F-B248BB96045E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC15DC0A-A65C-4F06-B45F-B248BB96045E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC15DC0A-A65C-4F06-B45F-B248BB96045E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC15DC0A-A65C-4F06-B45F-B248BB96045E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
