@@ -50,6 +50,7 @@ namespace StoreApi.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productRepository.GetById(id);
@@ -61,6 +62,7 @@ namespace StoreApi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin,Buyer")]
         [Route("{id}/like/toggle")]
         public async Task<IActionResult> ToggleLike(int id)
         {
