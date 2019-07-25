@@ -1,0 +1,2 @@
+# StoreApi
+Applaudo Technical Test
