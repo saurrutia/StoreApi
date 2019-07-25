@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Store.Core.Account;
 using Store.Core.Product;
 
 namespace Store.Persistence
@@ -11,19 +12,36 @@ namespace Store.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ProductEntity>().HasData(
-                new ProductEntity
-                {
-                    Id = 1,
-                    Name = "Potato Chips",
-                    Likes = 0,
-                    Price = 0,
-                    Stock = 0
-                });
+            modelBuilder.Entity<ProductLikesEntity>()
+                .HasKey(pl => new { pl.ProductId, pl.AccountId });
+
+            modelBuilder.Entity<ProductLikesEntity>()
+                .HasOne(pl => pl.Product)
+                .WithMany(p => p.AccountLikes)
+                .HasForeignKey(a => a.ProductId);
+
+            modelBuilder.Entity<ProductLikesEntity>()
+                .HasOne(pl => pl.Account)
+                .WithMany(p => p.LikedProducts)
+                .HasForeignKey(a => a.AccountId);
+
+            modelBuilder.Entity<ProductEntity>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<AccountEntity>()
+                .Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<ProductEntity>()
+                .HasData(ProductEntity.CreateDumpData().ToArray());
         }
 
-        public DbSet<ProductEntity> Products { get; set; }
+        
 
-       
+        public DbSet<ProductEntity> Product { get; set; }
+        public DbSet<AccountEntity> Account { get; set; }
+
+
     }
 }

@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Store.Core.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        IEnumerable<TEntity> List();
-        TEntity GetById(int id);
-        void Insert(TEntity entity);
+        IQueryable<TEntity> FindAll();
+        IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression);
+        void Create(TEntity entity);
         void Update(TEntity entity);
-        void Delete(int id);
+        void Delete(TEntity entity);
+        Task SaveAsync();
     }
 }

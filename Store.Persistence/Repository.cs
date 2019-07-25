@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Store.Core.Interfaces;
 
@@ -17,29 +19,35 @@ namespace Store.Persistence
             _dbSet = context.Set<TEntity>();
         }
 
-        public IEnumerable<TEntity> List()
+        public IQueryable<TEntity> FindAll()
         {
-            return _dbSet.ToList();
+            return _dbSet;
         }
 
-        public TEntity GetById(int id)
+        public IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _context.Set<TEntity>()
+                .Where(expression);
         }
 
-        public void Insert(TEntity entity)
+        public void Create(TEntity entity)
         {
-            throw new NotImplementedException();
+            _context.Set<TEntity>().Add(entity);
         }
 
         public void Update(TEntity entity)
         {
-            throw new NotImplementedException();
+            _context.Set<TEntity>().Update(entity);
         }
 
-        public void Delete(int id)
+        public void Delete(TEntity entity)
         {
-            throw new NotImplementedException();
+            _context.Set<TEntity>().Remove(entity);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }
