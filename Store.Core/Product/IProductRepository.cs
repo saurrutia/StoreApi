@@ -12,7 +12,7 @@ namespace Store.Core.Product
         Task<ProductEntity> GetById(int id);
         Task<ProductEntity> GetByName(string name);
         Task UpdateProduct(ProductEntity product);
-        Task AddLike(int id);
-        Task RemoveLike(int id);
+        Task CreateProduct(ProductEntity product);
+        Task DeleteProduct(ProductEntity product);
     }
 }

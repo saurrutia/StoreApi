@@ -16,10 +16,25 @@ namespace Store.Core.Account
         public int Id { get; protected set; }
         public string UserName { get; set; }
         public Role Role { get; set; }
-        public ICollection<ProductLikesEntity> LikedProducts
+        public ICollection<ProductLikesEntity> LikedProducts { get; set; }
+
+        public static List<AccountEntity> CreateDumpData()
         {
-            get => _likedProducts ?? new List<ProductLikesEntity>();
-            protected set => _likedProducts = value;
+            return new List<AccountEntity>
+            {
+                new AccountEntity()
+                {
+                    Id = 1,
+                    UserName = "admin01",
+                    Role = Role.Admin
+                },
+                new AccountEntity()
+                {
+                    Id = 2,
+                    UserName = "user02",
+                    Role = Role.Buyer
+                }
+            };
         }
     }
 

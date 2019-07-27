@@ -11,7 +11,7 @@ namespace Store.Persistence
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly StoreDbContext _context;
-        private readonly DbSet<TEntity> _dbSet;
+        protected readonly DbSet<TEntity> _dbSet;
 
         public Repository(StoreDbContext context)
         {
@@ -26,23 +26,23 @@ namespace Store.Persistence
 
         public IQueryable<TEntity> FindByCondition(Expression<Func<TEntity, bool>> expression)
         {
-            return _context.Set<TEntity>()
+            return _dbSet
                 .Where(expression);
         }
 
         public void Create(TEntity entity)
         {
-            _context.Set<TEntity>().Add(entity);
+            _dbSet.Add(entity);
         }
 
         public void Update(TEntity entity)
         {
-            _context.Set<TEntity>().Update(entity);
+            _dbSet.Update(entity);
         }
 
         public void Delete(TEntity entity)
         {
-            _context.Set<TEntity>().Remove(entity);
+            _dbSet.Remove(entity);
         }
 
         public async Task SaveAsync()

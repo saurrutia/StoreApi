@@ -12,13 +12,11 @@ namespace Store.Persistence.Repositories
 {
     public class ProductRepository : Repository<ProductEntity>, IProductRepository
     {
-        public ProductRepository(StoreDbContext context) : base(context)
-        {
-        }
+        private readonly IProductLikeRepository _productLikeRepository;
 
-        public async Task AddLike(int id)
+        public ProductRepository(StoreDbContext context, IProductLikeRepository productLikeRepository) : base(context)
         {
-            
+            _productLikeRepository = productLikeRepository;
         }
 
         public async Task<IEnumerable<ProductEntity>> GetAllProducts()
@@ -28,9 +26,11 @@ namespace Store.Persistence.Repositories
 
         public async Task<IEnumerable<ProductEntity>> GetAllProductsChunk(PaginationDto pagination)
         {
-
             var property = TypeDescriptor.GetProperties(typeof(ProductEntity)).Find(pagination.SortBy, true);
-            return await FindAll().OrderBy(a => property.GetValue(a))
+            var query = pagination.Order == "Desc"
+                ? FindAll().OrderByDescending(a => property.GetValue(a))
+                : FindAll().OrderBy(a => property.GetValue(a));
+            return await query
                 .Skip((pagination.PageNumber - 1) * pagination.PageSize)
                 .Take(pagination.PageSize)
                 .ToListAsync();
@@ -38,7 +38,7 @@ namespace Store.Persistence.Repositories
 
         public async Task<ProductEntity> GetById(int id)
         {
-            return await FindByCondition(p => p.Id == id).FirstOrDefaultAsync();
+            return await FindByCondition(p => p.Id == id).Include(a=>a.AccountLikes).FirstOrDefaultAsync();
         }
 
         public async Task<ProductEntity> GetByName(string name)
@@ -46,15 +46,22 @@ namespace Store.Persistence.Repositories
             return await FindByCondition(p => p.Name == name).FirstOrDefaultAsync();
         }
 
+        public async Task CreateProduct(ProductEntity product)
+        {
+            Create(product);
+            await SaveAsync();
+        }
+
+        public async Task DeleteProduct(ProductEntity product)
+        {
+            Delete(product);
+            await SaveAsync();
+        }
+
         public async Task UpdateProduct(ProductEntity product)
         {
             Update(product);
             await SaveAsync();
-        }
-
-        public async Task RemoveLike(int id)
-        {
-           
         }
     }
 }

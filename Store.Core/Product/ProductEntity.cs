@@ -9,39 +9,28 @@ namespace Store.Core.Product
 {
     public class ProductEntity
     {
-        private int? _likes;
-        private ICollection<ProductLikesEntity> _accountLikes;
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; protected set; }
         public string Name { get; set; }
         public int Stock { get; set; }
         public double Price { get; set; }
-        public int Likes
-        {
-            get => _likes ?? AccountLikes.Count;
-            protected set => _likes = value;
-        }
+        public int Likes { get; protected set; }
 
-        public ICollection<ProductLikesEntity> AccountLikes
-        {
-            get => _accountLikes ?? new List<ProductLikesEntity>();
-            protected set => _accountLikes = value;
-        }
+        public ICollection<ProductLikesEntity> AccountLikes { get; set; }
 
         public void ToggleLike(AccountEntity accountWhoLikes)
         {
             var account = AccountLikes.FirstOrDefault(a => a.AccountId == accountWhoLikes.Id);
             if (account != null)
             {
-                _likes--;
-                _accountLikes.Remove(account);
+                Likes--;
+                AccountLikes.Remove(account);
             }
             else
             {
-                _likes++;
-                _accountLikes.Add(new ProductLikesEntity
+                Likes++;
+                AccountLikes.Add(new ProductLikesEntity
                 {
                     AccountId = accountWhoLikes.Id,
                     ProductId = Id
@@ -59,7 +48,7 @@ namespace Store.Core.Product
                     Name = "Popotitos",
                     Stock = 5,
                     Price = 0.15,
-                    Likes = 0
+                    Likes = 2
                 },
                 new ProductEntity()
                 {
@@ -67,7 +56,7 @@ namespace Store.Core.Product
                     Name = "Rancheritos",
                     Stock = 5,
                     Price = 0.15,
-                    Likes = 0
+                    Likes = 1
                 },
                 new ProductEntity()
                 {
@@ -75,7 +64,7 @@ namespace Store.Core.Product
                     Name = "Crujitos",
                     Stock = 5,
                     Price = 0.25,
-                    Likes = 0
+                    Likes = 1
                 },
                 new ProductEntity()
                 {

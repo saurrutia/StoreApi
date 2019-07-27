@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Store.Core.Account;
 using Store.Core.Product;
 using StoreApi.Dtos;
+using StoreApi.Utils;
 
 namespace StoreApi.Controllers
 {
@@ -16,12 +17,12 @@ namespace StoreApi.Controllers
     public class AccountController : BaseController
     {
         private readonly IAccountRepository _accountRepository;
-        private readonly IConfiguration _configuration;
+        private readonly ITokenFactory _tokenFactory;
 
-        public AccountController(IAccountRepository accountRepository, IConfiguration configuration)
+        public AccountController(IAccountRepository accountRepository, ITokenFactory tokenFactory)
         {
             _accountRepository = accountRepository;
-            _configuration = configuration;
+            _tokenFactory = tokenFactory;
         }
 
         [HttpPost]
@@ -47,29 +48,9 @@ namespace StoreApi.Controllers
             if (account == null)
                 return Error($"Account with username :{item.UserName} not found.");
 
-            var signingKey = Convert.FromBase64String(_configuration["Jwt:SigningSecret"]);
-            var expiryDuration = int.Parse(_configuration["Jwt:ExpiryDuration"]);
+            var token = _tokenFactory.GenerateToken(account.UserName, account.Role);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Issuer = null,              // Not required as no third-party is involved
-                Audience = null,            // Not required as no third-party is involved
-                IssuedAt = DateTime.UtcNow,
-                NotBefore = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(expiryDuration),
-                Subject = new ClaimsIdentity(new List<Claim>
-                {
-                    new Claim("userid", account.Id.ToString()),
-                    new Claim("role", account.Role.ToString())
-                }),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(signingKey), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = jwtTokenHandler.CreateJwtSecurityToken(tokenDescriptor);
-            var token = jwtTokenHandler.WriteToken(jwtToken);
-            if(token == null)
-                return Error("Unauthorized.");
-            return Ok(token);
+            return token == null ? Unauthorized() : Ok(token);
         }
     }
 }

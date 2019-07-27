@@ -35,12 +35,19 @@ namespace Store.Persistence
 
             modelBuilder.Entity<ProductEntity>()
                 .HasData(ProductEntity.CreateDumpData().ToArray());
+
+            modelBuilder.Entity<AccountEntity>()
+                .HasData(AccountEntity.CreateDumpData().ToArray());
+
+            modelBuilder.Entity<ProductLikesEntity>()
+                .HasData(ProductLikesEntity.CreateDumpData().ToArray());
         }
 
         
 
         public DbSet<ProductEntity> Product { get; set; }
         public DbSet<AccountEntity> Account { get; set; }
+        public DbSet<ProductLikesEntity> ProductLikes { get; set; }
 
 
     }

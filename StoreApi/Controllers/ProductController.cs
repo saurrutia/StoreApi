@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Store.Common.Dtos;
 using Store.Core.Account;
 using Store.Core.Product;
 using StoreApi.Dtos;
+using StoreApi.Utils;
 
 namespace StoreApi.Controllers
 {
@@ -12,10 +14,14 @@ namespace StoreApi.Controllers
     public class ProductController : BaseController
     {
         private readonly IProductRepository _productRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly ITokenFactory _tokenFactory;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IProductRepository productRepository, IAccountRepository accountRepository, ITokenFactory tokenFactory)
         {
             _productRepository = productRepository;
+            _accountRepository = accountRepository;
+            _tokenFactory = tokenFactory;
         }
 
         [HttpGet]
@@ -23,11 +29,20 @@ namespace StoreApi.Controllers
         public async Task<IActionResult> Get([FromQuery]GetProductsDto item = null)
         {
             item = item ?? new GetProductsDto();
-            return Ok(await _productRepository.GetAllProductsChunk(new PaginationDto
+            var result = await _productRepository.GetAllProductsChunk(new PaginationDto
             {
                 PageNumber = item.PageNumber,
                 PageSize = item.PageSize,
-                SortBy = item.SortBy.ToString()
+                SortBy = item.SortBy.ToString(),
+                Order = item.Order.ToString()
+            });
+            return Ok(result.Select(a => new GetProductsResponseDto
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Stock = a.Stock,
+                Likes = a.Likes,
+                Price = a.Price
             }));
         }
 
@@ -40,7 +55,7 @@ namespace StoreApi.Controllers
             if (product != null)
                 return Error($"Name is already in use: {item.Name}");
 
-            _productRepository.Create(new ProductEntity()
+            await _productRepository.CreateProduct(new ProductEntity()
             {
                 Name = item.Name,
                 Price = item.Price,
@@ -57,7 +72,7 @@ namespace StoreApi.Controllers
             if (product == null)
                 return Error($"Product not found for id: {id}");
 
-            _productRepository.Delete(product);
+            await _productRepository.DeleteProduct(product);
             return Ok();
         }
 
@@ -69,12 +84,18 @@ namespace StoreApi.Controllers
             var product = await _productRepository.GetById(id);
             if (product == null)
                 return Error($"Product not found for id: {id}");
-            var userName = string.Empty;
-            product.ToggleLike(new AccountEntity
-            {
-                UserName = "username1"
-            });
+
+            var userNameClaim = HttpContext.User.Claims.SingleOrDefault(x => x.Type == _tokenFactory.UserIdClaim);
+            if (userNameClaim == null)
+                return Unauthorized();
+
+            var account = await _accountRepository.GetByUserName(userNameClaim.Value);
+            if(account == null)
+                return Error("Account not found.");
+
+            product.ToggleLike(account);
             await _productRepository.UpdateProduct(product);
+
             return Ok();
         }
     }
