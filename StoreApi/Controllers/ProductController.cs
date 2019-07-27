@@ -86,8 +86,8 @@ namespace StoreApi.Controllers
         {
             var product = await _productRepository.GetById(id);
 
-            if (product != null)
-                return Error($"Name is already in use: {id}");
+            if (product == null)
+                return Error($"Product with Id: {id} not found.");
 
             product.Price = item.Price;
             product.Stock = item.Stock;
@@ -132,7 +132,8 @@ namespace StoreApi.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin,Buyer")]
-        public async Task<IActionResult> Buy([FromQuery]int id, [FromQuery]int quantity)
+        [Route("{id}/buy")]
+        public async Task<IActionResult> Buy(int id, [FromQuery]int quantity)
         {
             var product = await _productRepository.GetById(id);
 
