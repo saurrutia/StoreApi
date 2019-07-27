@@ -46,6 +46,22 @@ namespace StoreApi.Controllers
             }));
         }
 
+        [HttpGet]
+        [Route("product")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByName([FromQuery]string name)
+        {
+            var result = await _productRepository.GetByName(name);
+            return Ok(new GetProductsResponseDto
+            {
+                Id = result.Id,
+                Name = result.Name,
+                Stock = result.Stock,
+                Likes = result.Likes,
+                Price = result.Price
+            });
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Post([FromBody]AddProductDto item)
@@ -61,6 +77,21 @@ namespace StoreApi.Controllers
                 Price = item.Price,
                 Stock = item.Stock
             });
+            return Ok();
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Put([FromQuery]int id, [FromBody]UpdateProductDto item)
+        {
+            var product = await _productRepository.GetById(id);
+
+            if (product != null)
+                return Error($"Name is already in use: {id}");
+
+            product.Price = item.Price;
+            product.Stock = item.Stock;
+            await _productRepository.UpdateProduct(product);
             return Ok();
         }
 
@@ -96,6 +127,20 @@ namespace StoreApi.Controllers
             product.ToggleLike(account);
             await _productRepository.UpdateProduct(product);
 
+            return Ok();
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin,Buyer")]
+        public async Task<IActionResult> Buy([FromQuery]int id, [FromQuery]int quantity)
+        {
+            var product = await _productRepository.GetById(id);
+
+            if (product != null)
+                return Error($"Name is already in use: {id}");
+
+            product.Stock -= quantity;
+            await _productRepository.UpdateProduct(product);
             return Ok();
         }
     }
