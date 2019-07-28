@@ -10,9 +10,9 @@ You should modify it depending of the Data Source you have available.
 
 The default data is loaded from the OnModelCreating method in the StoreDbContext so there is no need to use other files.
 
-For simplicity there's no need of a password, you can just login with the username. 
-*admin01 Admin
-*user02 Buyer
+For simplicity there's no need of a password, you can just login with the username:
+ - admin01 ~Admin~
+ - user02 ~Buyer~
 
 After login, use the token to authenticate. To access the restricted api's actions you need to add:
 `Authorization: Bearer <token>`
