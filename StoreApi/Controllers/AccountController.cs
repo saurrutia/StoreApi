@@ -36,13 +36,14 @@ namespace StoreApi.Controllers
             await _accountRepository.CreateAccount(new AccountEntity
             {
                 UserName = item.UserName,
+                Role = item.Role
             });
             return Ok();
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody]RegisterAccountDto item)
+        public async Task<IActionResult> Login([FromBody]LoginDto item)
         {
             var account = await _accountRepository.GetByUserName(item.UserName);
             if (account == null)
