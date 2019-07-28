@@ -73,12 +73,11 @@ namespace StoreApi.Controllers
             if (product != null)
                 return Error($"Name is already in use: {item.Name}");
 
-            await _productRepository.CreateProduct(new ProductEntity()
-            {
-                Name = item.Name,
-                Price = item.Price,
-                Stock = item.Stock
-            });
+            product = new ProductEntity().Create(item.Name, item.Stock, item.Price);
+            if(product == null)
+                return Error($"Invalid data.");
+
+            await _productRepository.CreateProduct(product);
             return Ok();
         }
 
@@ -92,7 +91,9 @@ namespace StoreApi.Controllers
             if (product == null)
                 return ProductNotFound(id);
 
-            product.Stock = stock;
+            if (!product.ChangeStock(stock))
+                return Error("Invalid data.");
+            
             await _productRepository.UpdateProduct(product);
             return Ok();
         }

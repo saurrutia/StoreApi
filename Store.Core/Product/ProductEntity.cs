@@ -21,6 +21,18 @@ namespace Store.Core.Product
 
         public ICollection<ProductLikesEntity> AccountLikes { get; set; }
 
+        public ProductEntity Create(string name, int stock, double price)
+        {
+            if (string.IsNullOrEmpty(name.Trim()) || stock < 0 || price < 0)
+                return null;
+            return new ProductEntity()
+            {
+                Name = name,
+                Stock = stock,
+                Price = price
+            };
+        }
+
         public void ToggleLike(AccountEntity accountWhoLikes)
         {
             var account = AccountLikes.FirstOrDefault(a => a.AccountId == accountWhoLikes.Id);
@@ -144,6 +156,14 @@ namespace Store.Core.Product
                     Likes = 0
                 }
             };
+        }
+
+        public bool ChangeStock(int stock)
+        {
+            if (stock < 0)
+                return false;
+            Stock = stock;
+            return true;
         }
     }
 }

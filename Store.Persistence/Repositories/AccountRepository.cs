@@ -15,10 +15,15 @@ namespace Store.Persistence.Repositories
             return await FindByCondition(p => p.UserName == userName).FirstOrDefaultAsync();
         }
 
+        public async Task<AccountEntity> GetByUserNameAndPassword(string userName, string password)
+        {
+            return await FindByCondition(p => p.UserName == userName && p.Password == password).FirstOrDefaultAsync();
+        }
+
         public async Task CreateAccount(AccountEntity accountEntity)
         {
             Create(accountEntity);
             await SaveAsync();
-        }
+        }      
     }
 }

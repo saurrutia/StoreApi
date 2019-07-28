@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Store.Common;
 using Store.Core.Account;
 using Store.Core.Product;
 using StoreApi.Dtos;
@@ -36,6 +37,7 @@ namespace StoreApi.Controllers
             await _accountRepository.CreateAccount(new AccountEntity
             {
                 UserName = item.UserName,
+                Password = item.Password.ToSha256(),
                 Role = item.Role
             });
             return Ok();
@@ -45,7 +47,7 @@ namespace StoreApi.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody]LoginDto item)
         {
-            var account = await _accountRepository.GetByUserName(item.UserName);
+            var account = await _accountRepository.GetByUserNameAndPassword(item.UserName, item.Password.ToSha256());
             if (account == null)
                 return Error($"Account with username :{item.UserName} not found.");
 
