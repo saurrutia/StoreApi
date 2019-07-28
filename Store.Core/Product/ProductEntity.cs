@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Store.Core.Account;
+using Store.Core.Events;
+using Store.Core.Events.Common;
 
 namespace Store.Core.Product
 {
@@ -36,6 +38,25 @@ namespace Store.Core.Product
                     ProductId = Id
                 });
             }
+        }        
+
+        public bool Buy(int quantity)
+        {
+            if (Stock < quantity)
+                return false;
+            Stock -= quantity;
+            DomainEventsDispatcher.Raise(new ProductBuyed() { Product = this, Quantity = quantity });
+            return true;
+        }
+
+        public bool ChangePrice(double newPrice)
+        {
+            if (newPrice < 0)
+                return false;
+            var lastPrice = Price;
+            Price = newPrice;
+            DomainEventsDispatcher.Raise(new PriceUpdated() { Product = this, LastPrice = lastPrice  });
+            return true;
         }
 
         public static List<ProductEntity> CreateDumpData()

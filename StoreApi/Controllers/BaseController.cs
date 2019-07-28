@@ -19,5 +19,10 @@ namespace StoreApi.Controllers
         {
             return BadRequest(Envelope.Error(errorMessage));
         }
+
+        protected IActionResult NotFound(string errorMessage)
+        {
+            return NotFound(Envelope.Error(errorMessage));
+        }
     }
 }

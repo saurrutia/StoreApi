@@ -5,7 +5,9 @@ namespace StoreApi.Utils
     public interface ITokenFactory
     {
         string UserIdClaim { get; }
-        string RoleIdClaim { get; }
+        string RoleClaim { get; }
         string GenerateToken(string userId, Role role);
+        string GetUser();
+        string GetRole();
     }
 }

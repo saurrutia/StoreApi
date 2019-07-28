@@ -12,11 +12,8 @@ namespace Store.Persistence.Repositories
 {
     public class ProductRepository : Repository<ProductEntity>, IProductRepository
     {
-        private readonly IProductLikeRepository _productLikeRepository;
-
-        public ProductRepository(StoreDbContext context, IProductLikeRepository productLikeRepository) : base(context)
-        {
-            _productLikeRepository = productLikeRepository;
+        public ProductRepository(StoreDbContext context) : base(context)
+        {            
         }
 
         public async Task<IEnumerable<ProductEntity>> GetAllProducts()

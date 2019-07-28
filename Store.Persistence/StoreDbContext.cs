@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Store.Core.Account;
+using Store.Core.Interfaces;
 using Store.Core.Product;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Store.Persistence
 {
@@ -33,6 +36,14 @@ namespace Store.Persistence
                 .Property(p => p.Id)
                 .ValueGeneratedOnAdd();
 
+            modelBuilder.Entity<PriceUpdateLogEntity>()
+               .Property(p => p.Id)
+               .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<PurchaseLogEntity>()
+               .Property(p => p.Id)
+               .ValueGeneratedOnAdd();
+
             modelBuilder.Entity<ProductEntity>()
                 .HasData(ProductEntity.CreateDumpData().ToArray());
 
@@ -49,6 +60,8 @@ namespace Store.Persistence
         public DbSet<AccountEntity> Account { get; set; }
         public DbSet<ProductLikesEntity> ProductLikes { get; set; }
 
+        public DbSet<PriceUpdateLogEntity> PriceUpdatesLog { get; set; }
+        public DbSet<PurchaseLogEntity> PurchaseLog { get; set; }
 
     }
 }

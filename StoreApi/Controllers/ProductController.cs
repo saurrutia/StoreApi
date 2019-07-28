@@ -52,6 +52,8 @@ namespace StoreApi.Controllers
         public async Task<IActionResult> GetByName([FromQuery]string name)
         {
             var result = await _productRepository.GetByName(name);
+            if (result == null)
+                return NotFound($"Product with Name: {name} not found");
             return Ok(new GetProductsResponseDto
             {
                 Id = result.Id,
@@ -82,15 +84,32 @@ namespace StoreApi.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Put([FromQuery]int id, [FromBody]UpdateProductDto item)
+        [Route("stock")]
+        public async Task<IActionResult> Stock([FromQuery]int id, int stock)
         {
             var product = await _productRepository.GetById(id);
 
             if (product == null)
-                return Error($"Product with Id: {id} not found.");
+                return ProductNotFound(id);
 
-            product.Price = item.Price;
-            product.Stock = item.Stock;
+            product.Stock = stock;
+            await _productRepository.UpdateProduct(product);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        [Route("price")]
+        public async Task<IActionResult> Price([FromQuery]int id, double price)
+        {
+            var product = await _productRepository.GetById(id);
+
+            if (product == null)
+                return ProductNotFound(id);
+
+            if (!product.ChangePrice(price))
+                return Error("Invalid price.");
+            
             await _productRepository.UpdateProduct(product);
             return Ok();
         }
@@ -101,7 +120,7 @@ namespace StoreApi.Controllers
         {
             var product = await _productRepository.GetById(id);
             if (product == null)
-                return Error($"Product not found for id: {id}");
+                return ProductNotFound(id);
 
             await _productRepository.DeleteProduct(product);
             return Ok();
@@ -114,13 +133,13 @@ namespace StoreApi.Controllers
         {
             var product = await _productRepository.GetById(id);
             if (product == null)
-                return Error($"Product not found for id: {id}");
+                return ProductNotFound(id);
 
-            var userNameClaim = HttpContext.User.Claims.SingleOrDefault(x => x.Type == _tokenFactory.UserIdClaim);
+            var userNameClaim = _tokenFactory.GetUser();
             if (userNameClaim == null)
                 return Unauthorized();
 
-            var account = await _accountRepository.GetByUserName(userNameClaim.Value);
+            var account = await _accountRepository.GetByUserName(userNameClaim);
             if(account == null)
                 return Error("Account not found.");
 
@@ -137,12 +156,19 @@ namespace StoreApi.Controllers
         {
             var product = await _productRepository.GetById(id);
 
-            if (product != null)
-                return Error($"Name is already in use: {id}");
+            if (product == null)
+                return ProductNotFound(id);
 
-            product.Stock -= quantity;
+            if (!product.Buy(quantity))
+                return Error("The quantity exceeds product's stock.");
+
             await _productRepository.UpdateProduct(product);
             return Ok();
+        }
+
+        private IActionResult ProductNotFound(int id)
+        {
+            return NotFound($"Product with Id: {id} not found.");
         }
     }
 }

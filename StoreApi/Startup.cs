@@ -19,6 +19,9 @@ using Store.Persistence.Repositories;
 using StoreApi.Middlewares;
 using StoreApi.Utils;
 using Swashbuckle.AspNetCore.Swagger;
+using Store.Core.Events.Common;
+using StoreApi.Handlers;
+using Store.Core.Events;
 
 namespace StoreApi
 {
@@ -35,9 +38,14 @@ namespace StoreApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<StoreDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("StoreConnection")));
-            services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddTransient<IProductLikeRepository, ProductLikeRepository>();
-            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddScoped<IRepository<PriceUpdateLogEntity>, Repository<PriceUpdateLogEntity>>();
+            services.AddScoped<IRepository<PurchaseLogEntity>, Repository<PurchaseLogEntity>>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductLikeRepository, ProductLikeRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IDomainHandler<PriceUpdated>, PriceUpdatedHandler>();
+            services.AddScoped<IDomainHandler<ProductBuyed>, ProductBuyedHandler>();
+            services.AddHttpContextAccessor();
             services.AddSingleton<ITokenFactory, JwtFactory>();
             services.AddMvc();
             services.AddSwaggerGen(c =>
@@ -68,6 +76,7 @@ namespace StoreApi
                         IssuerSigningKey = new SymmetricSecurityKey(signingKey)
                     };
                 });
+            DomainEventsDispatcher.Dispatcher = new NetCoreEventContainer(services.BuildServiceProvider());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
