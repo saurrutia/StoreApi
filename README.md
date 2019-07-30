@@ -27,3 +27,6 @@ For login you could register a user with the Role *Admin* or *Buyer*, but you ca
 
 After login, use the token to authenticate. To access the restricted api's actions you need to add the header:
 `Authorization: Bearer <token>`
+
+Postman Api Test Link
+https://www.getpostman.com/collections/c42c7952b695b7e3f429
