@@ -49,5 +49,10 @@ namespace Store.Persistence
         {
             await _context.SaveChangesAsync();
         }
+
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
     }
 }

@@ -22,14 +22,12 @@ namespace Store.Core.Account
             {
                 new AccountEntity()
                 {
-                    Id = 1,
                     UserName = "admin01",
                     Password = "admin01".ToSha256(),
                     Role = Role.Admin
                 },
                 new AccountEntity()
                 {
-                    Id = 2,
                     UserName = "user02",
                     Password = "user02".ToSha256(),
                     Role = Role.Buyer

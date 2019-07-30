@@ -1,7 +1,9 @@
-﻿namespace Store.Core.Events.Common
+﻿using System.Threading.Tasks;
+
+namespace Store.Core.Events.Common
 {
     public interface IDomainHandler<T> where T : IDomainEvent
     {
-        void Handle(T @event);
+        Task Handle(T @event);
     }
 }

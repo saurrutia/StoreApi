@@ -1,7 +1,9 @@
-﻿namespace Store.Core.Events.Common
+﻿using System.Threading.Tasks;
+
+namespace Store.Core.Events.Common
 {
     public interface IEventDispatcher
     {
-        void Dispatch<TEvent>(TEvent eventToDispatch) where TEvent : IDomainEvent;
+        Task Dispatch<TEvent>(TEvent eventToDispatch) where TEvent : IDomainEvent;
     }
 }

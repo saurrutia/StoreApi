@@ -108,7 +108,8 @@ namespace StoreApi.Controllers
             if (product == null)
                 return ProductNotFound(id);
 
-            if (!product.ChangePrice(price))
+            var result = await product.ChangePrice(price);
+            if (!result)
                 return Error("Invalid price.");
             
             await _productRepository.UpdateProduct(product);
@@ -160,7 +161,8 @@ namespace StoreApi.Controllers
             if (product == null)
                 return ProductNotFound(id);
 
-            if (!product.Buy(quantity))
+            var result = await product.Buy(quantity);
+            if (!result)
                 return Error("The quantity exceeds product's stock.");
 
             await _productRepository.UpdateProduct(product);

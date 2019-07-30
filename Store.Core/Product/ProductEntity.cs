@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Threading.Tasks;
 using Store.Core.Account;
 using Store.Core.Events;
 using Store.Core.Events.Common;
@@ -52,22 +53,22 @@ namespace Store.Core.Product
             }
         }        
 
-        public bool Buy(int quantity)
+        public async Task<bool> Buy(int quantity)
         {
             if (Stock < quantity)
                 return false;
             Stock -= quantity;
-            DomainEventsDispatcher.Raise(new ProductBuyed() { Product = this, Quantity = quantity });
+            await DomainEventsDispatcher.Raise(new ProductBuyed() { Product = this, Quantity = quantity });
             return true;
         }
 
-        public bool ChangePrice(double newPrice)
+        public async Task<bool> ChangePrice(double newPrice)
         {
             if (newPrice < 0)
                 return false;
             var lastPrice = Price;
             Price = newPrice;
-            DomainEventsDispatcher.Raise(new PriceUpdated() { Product = this, LastPrice = lastPrice  });
+            await DomainEventsDispatcher.Raise(new PriceUpdated() { Product = this, LastPrice = lastPrice  });
             return true;
         }
 
@@ -77,7 +78,6 @@ namespace Store.Core.Product
             {
                 new ProductEntity()
                 {
-                    Id = 1,
                     Name = "Popotitos",
                     Stock = 5,
                     Price = 0.15,
@@ -85,7 +85,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 2,
                     Name = "Rancheritos",
                     Stock = 5,
                     Price = 0.15,
@@ -93,7 +92,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 3,
                     Name = "Crujitos",
                     Stock = 5,
                     Price = 0.25,
@@ -101,7 +99,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 4,
                     Name = "Quesitos",
                     Stock = 5,
                     Price = 0.15,
@@ -109,7 +106,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 5,
                     Name = "Platanitos",
                     Stock = 5,
                     Price = 0.25,
@@ -117,7 +113,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 6,
                     Name = "Popotitos Queso",
                     Stock = 5,
                     Price = 0.15,
@@ -125,7 +120,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 7,
                     Name = "Rancheritos Queso",
                     Stock = 5,
                     Price = 0.15,
@@ -133,7 +127,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 8,
                     Name = "Crujitos Queso",
                     Stock = 5,
                     Price = 0.25,
@@ -141,7 +134,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 9,
                     Name = "Quesitos Queso",
                     Stock = 5,
                     Price = 0.15,
@@ -149,7 +141,6 @@ namespace Store.Core.Product
                 },
                 new ProductEntity()
                 {
-                    Id = 10,
                     Name = "Platanitos Queso",
                     Stock = 5,
                     Price = 0.25,

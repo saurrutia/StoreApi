@@ -11,6 +11,6 @@ namespace StoreApi.Dtos
         public string Name { get; set; }
         public int Stock { get; set; }
         public double Price { get; set; }
-        public double Likes { get; set; }
+        public int Likes { get; set; }
     }
 }

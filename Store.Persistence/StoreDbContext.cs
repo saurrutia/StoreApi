@@ -43,15 +43,6 @@ namespace Store.Persistence
             modelBuilder.Entity<PurchaseLogEntity>()
                .Property(p => p.Id)
                .ValueGeneratedOnAdd();
-
-            modelBuilder.Entity<ProductEntity>()
-                .HasData(ProductEntity.CreateDumpData().ToArray());
-
-            modelBuilder.Entity<AccountEntity>()
-                .HasData(AccountEntity.CreateDumpData().ToArray());
-
-            modelBuilder.Entity<ProductLikesEntity>()
-                .HasData(ProductLikesEntity.CreateDumpData().ToArray());
         }
 
         

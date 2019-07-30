@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Store.Core.Account;
+using Store.Core.Product;
 using Store.Persistence;
 
 namespace StoreApi
@@ -23,6 +17,10 @@ namespace StoreApi
                 var context = serviceScope.ServiceProvider.GetRequiredService<StoreDbContext>();
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
+                context.Account.AddRange(AccountEntity.CreateDumpData());
+                context.Product.AddRange(ProductEntity.CreateDumpData());
+                context.ProductLikes.AddRange(ProductLikesEntity.CreateDumpData());
+                context.SaveChanges();
             }
             host.Run();
         }

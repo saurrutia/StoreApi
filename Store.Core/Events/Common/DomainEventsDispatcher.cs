@@ -1,12 +1,14 @@
-﻿namespace Store.Core.Events.Common
+﻿using System.Threading.Tasks;
+
+namespace Store.Core.Events.Common
 {
     public static class DomainEventsDispatcher
     {
         public static IEventDispatcher Dispatcher { get; set; }
 
-        public static void Raise<T>(T @event) where T : IDomainEvent
+        public static async Task Raise<T>(T @event) where T : IDomainEvent
         {
-            Dispatcher.Dispatch(@event);
+            await Dispatcher.Dispatch(@event);
         }
 
     }

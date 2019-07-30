@@ -1,4 +1,5 @@
-﻿using Store.Core.Events;
+﻿using System.Threading.Tasks;
+using Store.Core.Events;
 using Store.Core.Events.Common;
 using Store.Core.Interfaces;
 using Store.Core.Product;
@@ -17,7 +18,7 @@ namespace StoreApi.Handlers
             _tokenFactory = tokenFactory;            
         }
 
-        public void Handle(ProductBuyed @event)
+        public async Task Handle(ProductBuyed @event)
         {
             _purchaseLogRepository.Create(new PurchaseLogEntity
             {
@@ -26,7 +27,7 @@ namespace StoreApi.Handlers
                 Quantity = @event.Quantity,
                 UserName = _tokenFactory.GetUser()
             });
-            _purchaseLogRepository.SaveAsync();
+            await _purchaseLogRepository.SaveAsync();
         }
     }
 }
