@@ -2,14 +2,20 @@
 
 Applaudo Technical Test
 
-To Run the App you just need to set the Data Source on the Connection String located on the file appsettings.Development.json.
+There is 2 ways of running the app, with physical database or In-Memory approach. To change this running loca, you need to modify the environment variable:
+
+Development -> _In-Memory_
+Test -> _SqlServer_
+
+
+To Run the App in Sql Server you just need to set the Data Source on the Connection String located on the file appsettings.Development.json.
 
 In my case I used a SQL Server SQLEXPRESS instance so currently is
 `Data Source=localhost\\SQLEXPRESS;Initial Catalog=StoreDb;Integrated Security=True`
 
 You should modify it depending of the Data Source you have available.
 
-The default data is loaded from the OnModelCreating method in the StoreDbContext so there is no need to use other files.
+The default data is loaded from the Program Method so there is no need to use other files.
 
 Then To Run the API use the default profile *IIS Express* (uses SSL) or the *StoreApi* with the StoreApi as StartUp project (default).
 
