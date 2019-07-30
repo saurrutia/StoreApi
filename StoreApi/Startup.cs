@@ -41,6 +41,7 @@ namespace StoreApi
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IDomainHandler<PriceUpdated>, PriceUpdatedHandler>();
             services.AddScoped<IDomainHandler<ProductBuyed>, ProductBuyedHandler>();
+            services.AddScoped<IEventDispatcher, NetCoreEventContainer>();
             services.AddHttpContextAccessor();
             services.AddSingleton<ITokenFactory, JwtFactory>();
             services.AddMvc();
@@ -72,9 +73,6 @@ namespace StoreApi
                         IssuerSigningKey = new SymmetricSecurityKey(signingKey)
                     };
                 });
-
-            var serviceProvider = services.BuildServiceProvider();
-            DomainEventsDispatcher.Dispatcher = new NetCoreEventContainer(serviceProvider);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

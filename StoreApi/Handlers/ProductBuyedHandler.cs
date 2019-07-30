@@ -27,7 +27,6 @@ namespace StoreApi.Handlers
                 Quantity = @event.Quantity,
                 UserName = _tokenFactory.GetUser()
             });
-            await _purchaseLogRepository.SaveAsync();
         }
     }
 }

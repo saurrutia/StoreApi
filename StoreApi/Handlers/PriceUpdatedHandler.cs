@@ -28,7 +28,6 @@ namespace StoreApi.Handlers
                 PriceAfter = @event.Product.Price,
                 UserName = _tokenFactory.GetUser()
             });
-            await _priceUpdateLogRepository.SaveAsync();
         }
     }
 }

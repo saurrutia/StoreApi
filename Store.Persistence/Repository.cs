@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Store.Core;
+using Store.Core.Events.Common;
 using Store.Core.Interfaces;
 
 namespace Store.Persistence
@@ -12,11 +14,13 @@ namespace Store.Persistence
     {
         private readonly StoreDbContext _context;
         protected readonly DbSet<TEntity> _dbSet;
+        private readonly IEventDispatcher _domainEventsDispatcher;
 
-        public Repository(StoreDbContext context)
+        public Repository(StoreDbContext context, IEventDispatcher domainEventsDispatcher)
         {
             _context = context;
             _dbSet = context.Set<TEntity>();
+            _domainEventsDispatcher = domainEventsDispatcher;
         }
 
         public IQueryable<TEntity> FindAll()
@@ -47,12 +51,34 @@ namespace Store.Persistence
 
         public async Task SaveAsync()
         {
+            await ExecuteDomainEvents();
             await _context.SaveChangesAsync();
         }
 
         public void Save()
         {
             _context.SaveChanges();
+        }
+
+        private async Task ExecuteDomainEvents()
+        {
+            var domainEntities = _context.ChangeTracker
+                .Entries<Entity>()
+                .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any());
+
+            var domainEvents = domainEntities
+                .SelectMany(x => x.Entity.DomainEvents)
+                .ToList();
+
+            domainEntities.ToList()
+                .ForEach(entity => entity.Entity.ClearDomainEvents());
+
+            var tasks = domainEvents
+                .Select(async (domainEvent) => {
+                    await _domainEventsDispatcher.Dispatch(domainEvent);
+                });
+
+            await Task.WhenAll(tasks);
         }
     }
 }

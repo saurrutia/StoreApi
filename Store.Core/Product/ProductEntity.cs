@@ -10,7 +10,7 @@ using Store.Core.Events.Common;
 
 namespace Store.Core.Product
 {
-    public class ProductEntity
+    public class ProductEntity : Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -53,22 +53,22 @@ namespace Store.Core.Product
             }
         }        
 
-        public async Task<bool> Buy(int quantity)
+        public bool Buy(int quantity)
         {
             if (Stock < quantity)
                 return false;
             Stock -= quantity;
-            await DomainEventsDispatcher.Raise(new ProductBuyed() { Product = this, Quantity = quantity });
+            AddDomainEvent(new ProductBuyed() { Product = this, Quantity = quantity });
             return true;
         }
 
-        public async Task<bool> ChangePrice(double newPrice)
+        public bool ChangePrice(double newPrice)
         {
             if (newPrice < 0)
                 return false;
             var lastPrice = Price;
             Price = newPrice;
-            await DomainEventsDispatcher.Raise(new PriceUpdated() { Product = this, LastPrice = lastPrice  });
+            AddDomainEvent(new PriceUpdated() { Product = this, LastPrice = lastPrice  });
             return true;
         }
 

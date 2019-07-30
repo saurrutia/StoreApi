@@ -6,7 +6,7 @@ using Store.Core.Product;
 
 namespace Store.Core.Account
 {
-    public class AccountEntity
+    public class AccountEntity : Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

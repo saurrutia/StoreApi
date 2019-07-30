@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Store.Common.Dtos;
+using Store.Core.Events.Common;
 using Store.Core.Product;
 
 namespace Store.Persistence.Repositories
 {
     public class ProductRepository : Repository<ProductEntity>, IProductRepository
     {
-        public ProductRepository(StoreDbContext context) : base(context)
+        public ProductRepository(StoreDbContext context, IEventDispatcher domainEventsDispatcher) : base(context, domainEventsDispatcher)
         {            
         }
 

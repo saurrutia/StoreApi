@@ -17,10 +17,23 @@ namespace StoreApi.Handlers
 
         public async Task Dispatch<TEvent>(TEvent eventToDispatch) where TEvent : IDomainEvent
         {
-            foreach (var handler in _serviceProvider.GetServices<IDomainHandler<TEvent>>())
+            if (eventToDispatch.GetType() == typeof(PriceUpdated))
             {
-                await handler.Handle(eventToDispatch);
+                var domainHandler = _serviceProvider.GetServices<IDomainHandler<PriceUpdated>>();
+                foreach (var handler in domainHandler)
+                {
+                    await handler.Handle(eventToDispatch as PriceUpdated);
+                }
             }
+            if (eventToDispatch.GetType() == typeof(ProductBuyed))
+            {
+                var domainHandler = _serviceProvider.GetServices<IDomainHandler<ProductBuyed>>();
+                foreach (var handler in domainHandler)
+                {
+                    await handler.Handle(eventToDispatch as ProductBuyed);
+                }
+            }
+            
         }
     }
 }

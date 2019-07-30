@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Store.Core.Account;
+using Store.Core.Events.Common;
 
 namespace Store.Persistence.Repositories
 {
     public class AccountRepository : Repository<AccountEntity>, IAccountRepository
     {
-        public AccountRepository(StoreDbContext context) : base(context)
+        public AccountRepository(StoreDbContext context, IEventDispatcher domainEventsDispatcher) : base(context, domainEventsDispatcher)
         {
         }
 

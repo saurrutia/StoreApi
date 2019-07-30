@@ -6,7 +6,7 @@ using Store.Core.Account;
 
 namespace Store.Core.Product
 {
-    public class ProductLikesEntity
+    public class ProductLikesEntity : Entity
     {
         [Key]
         public int ProductId { get; set; }

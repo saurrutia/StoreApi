@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+using Store.Core.Events.Common;
 using Store.Core.Product;
 
 namespace Store.Persistence.Repositories
 {
     public class ProductLikeRepository : Repository<ProductLikesEntity>, IProductLikeRepository
     {
-        public ProductLikeRepository(StoreDbContext context) : base(context)
+        public ProductLikeRepository(StoreDbContext context, IEventDispatcher domainEventsDispatcher) : base(context, domainEventsDispatcher)
         {
         }
 
