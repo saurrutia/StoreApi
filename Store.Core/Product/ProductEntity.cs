@@ -55,6 +55,8 @@ namespace Store.Core.Product
 
         public bool Buy(int quantity)
         {
+            if (quantity < 1)
+                return false;
             if (Stock < quantity)
                 return false;
             Stock -= quantity;
@@ -69,6 +71,14 @@ namespace Store.Core.Product
             var lastPrice = Price;
             Price = newPrice;
             AddDomainEvent(new PriceUpdated() { Product = this, LastPrice = lastPrice  });
+            return true;
+        }
+
+        public bool ChangeStock(int stock)
+        {
+            if (stock < 0)
+                return false;
+            Stock = stock;
             return true;
         }
 
@@ -147,14 +157,6 @@ namespace Store.Core.Product
                     Likes = 0
                 }
             };
-        }
-
-        public bool ChangeStock(int stock)
-        {
-            if (stock < 0)
-                return false;
-            Stock = stock;
-            return true;
         }
     }
 }
